@@ -21,6 +21,12 @@ jobs:
             -   name: Disable Xdebug
                 run: sudo phpdismod xdebug
 
+            -   name: Install imagemagick
+                run: sudo apt install imagemagick
+
+            -   name: Install zbar
+                run: sudo apt install zbar-tools
+
             -   name: Install dependencies
                 run: composer install --no-progress --no-ansi --profile --no-interaction --no-scripts --no-suggest --prefer-dist
 
