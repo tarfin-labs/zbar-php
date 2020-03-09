@@ -36,13 +36,13 @@ class Zbar
      */
     public function __construct($image)
     {
-        if (!file_exists($image)) {
+        if (! file_exists($image)) {
             throw UnableToOpen::noSuchFile($image);
         }
 
         $mimeType = mime_content_type($image);
 
-        if (!in_array($mimeType, $this->validFormats)) {
+        if (! in_array($mimeType, $this->validFormats)) {
             throw InvalidFormat::invalidMimeType($mimeType);
         }
 
@@ -58,7 +58,7 @@ class Zbar
     {
         $this->process->run();
 
-        if (!$this->process->isSuccessful()) {
+        if (! $this->process->isSuccessful()) {
             throw new ProcessFailedException($this->process);
         }
 
