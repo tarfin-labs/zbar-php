@@ -43,18 +43,6 @@ Please see [CHANGELOG](CHANGELOG.md) for more information what has changed recen
 
 ## Contributing
 
-Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
-
-### Security
-
-If you discover any security related issues, please email faruk.can@tarfin.com instead of using the issue tracker.
-
-### Changelog
-
-Please see [CHANGELOG](CHANGELOG.md) for more information about what has changed recently.
-
-## Contributing
-
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
 Please make sure to update the tests as appropriate.
