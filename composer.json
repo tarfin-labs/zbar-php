@@ -1,0 +1,44 @@
+{
+    "name": "tarfin-labs/zbar-php",
+    "description": "zbar-php is a php package that provides an interface to the zbar bar-code reading library.",
+    "keywords": [
+        "tarfin-labs",
+        "zbar-php",
+        "bar-code",
+        "qr-code"
+    ],
+    "homepage": "https://github.com/tarfin-labs/zbar-php",
+    "license": "MIT",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Faruk Can",
+            "email": "faruk.can@tarfin.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^7.2",
+        "symfony/process": "^5.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^8.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "TarfinLabs\\ZbarPhp\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "TarfinLabs\\ZbarPhp\\Tests\\": "tests"
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit",
+        "test-coverage": "vendor/bin/phpunit --coverage-html coverage"
+    },
+    "config": {
+        "sort-packages": true
+    }
+}
