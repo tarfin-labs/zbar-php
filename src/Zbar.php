@@ -6,6 +6,7 @@ use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 use TarfinLabs\ZbarPhp\Exceptions\InvalidFormat;
 use TarfinLabs\ZbarPhp\Exceptions\UnableToOpen;
+use TarfinLabs\ZbarPhp\Exceptions\ZbarError;
 
 class Zbar
 {
@@ -53,13 +54,14 @@ class Zbar
      * Scan bar-code and return value.
      *
      * @return string
+     * @throws ZbarError
      */
     public function scan()
     {
         $this->process->run();
 
         if (! $this->process->isSuccessful()) {
-            throw new ProcessFailedException($this->process);
+            throw ZbarError::exitStatus($this->process->getExitCode());
         }
 
         return trim($this->process->getOutput());

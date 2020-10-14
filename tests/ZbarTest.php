@@ -5,6 +5,7 @@ namespace TarfinLabs\ZbarPhp\Tests;
 use PHPUnit\Framework\TestCase;
 use TarfinLabs\ZbarPhp\Exceptions\InvalidFormat;
 use TarfinLabs\ZbarPhp\Exceptions\UnableToOpen;
+use TarfinLabs\ZbarPhp\Exceptions\ZbarError;
 use TarfinLabs\ZbarPhp\Zbar;
 
 class ZbarTest extends TestCase
@@ -23,6 +24,10 @@ class ZbarTest extends TestCase
      * @var string
      */
     protected $invalidFile;
+    /**
+     * @var string
+     */
+    protected $emptyImage;
 
     protected function setUp(): void
     {
@@ -31,10 +36,11 @@ class ZbarTest extends TestCase
         $this->qrcode = __DIR__.'/files/qrcode.png';
         $this->barcode = __DIR__.'/files/barcode.gif';
         $this->invalidFile = __DIR__.'/files/qrcode.txt';
+        $this->emptyImage = __DIR__.'/files/empty.png';
     }
 
     /** @test */
-    public function it_will_throw_unable_to_open_execption_when_try_to_scan_non_existing_file()
+    public function it_will_throw_unable_to_open_exception_when_try_to_scan_non_existing_file()
     {
         $this->expectException(UnableToOpen::class);
 
@@ -42,7 +48,7 @@ class ZbarTest extends TestCase
     }
 
     /** @test */
-    public function it_will_throw_invalid_format_execption_when_try_to_scan_invalid_file_type()
+    public function it_will_throw_invalid_format_exception_when_try_to_scan_invalid_file_type()
     {
         $this->expectException(InvalidFormat::class);
 
@@ -56,6 +62,15 @@ class ZbarTest extends TestCase
         $code = $zbar->scan();
 
         $this->assertSame('tarfin', $code);
+    }
+
+    /** @test */
+    public function it_will_throw_error_when_try_to_scan_empty_image()
+    {
+        $this->expectException(ZbarError::class);
+
+        $zbar = new Zbar($this->emptyImage);
+        $code = $zbar->scan();
     }
 
     /** @test */
