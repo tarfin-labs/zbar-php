@@ -3,7 +3,6 @@
 namespace TarfinLabs\ZbarPhp\Exceptions;
 
 use Exception;
-use Throwable;
 
 class ZbarError extends Exception
 {
