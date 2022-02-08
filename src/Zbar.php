@@ -31,6 +31,7 @@ class Zbar
      * Zbar constructor.
      *
      * @param $image
+     *
      * @throws InvalidFormat
      * @throws UnableToOpen
      */
@@ -53,6 +54,7 @@ class Zbar
      * Scan bar-code and return value.
      *
      * @return string
+     *
      * @throws ZbarError
      */
     public function scan()
