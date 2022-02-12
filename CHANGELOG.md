@@ -4,6 +4,8 @@ All notable changes to `zbar-php` will be documented in this file
 
 ## Unreleased
 
+- symfony process 6 compatibility.
+
 ## 1.2.0 - 2021-06-03
 - PHP 8 support added.
 
