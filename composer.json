@@ -18,9 +18,9 @@
         }
     ],
     "require": {
-        "php": "^7.2 || ^8.0",
+        "php": "^7.2|^7.3|^7.4|^8.0|^8.1",
         "ext-imagick": "*",
-        "symfony/process": "^4.4|^5.0"
+        "symfony/process": "^4.4|^5.0|^6.0"
     },
     "require-dev": {
         "phpunit/phpunit": "^8.5|^9.0"
