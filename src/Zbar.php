@@ -42,13 +42,13 @@ class Zbar
      */
     public function __construct($image)
     {
-        if (!file_exists($image)) {
+        if (! file_exists($image)) {
             throw UnableToOpen::noSuchFile($image);
         }
 
         $mimeType = mime_content_type($image);
 
-        if (!in_array($mimeType, $this->validFormats)) {
+        if (! in_array($mimeType, $this->validFormats)) {
             throw InvalidFormat::invalidMimeType($mimeType);
         }
 
@@ -67,7 +67,7 @@ class Zbar
     {
         $this->process->run();
 
-        if (!$this->process->isSuccessful()) {
+        if (! $this->process->isSuccessful()) {
             throw ZbarError::exitStatus($this->process->getExitCode());
         }
 
@@ -97,13 +97,13 @@ class Zbar
     {
         $this->processAll->run();
 
-        if (!$this->processAll->isSuccessful()) {
+        if (! $this->processAll->isSuccessful()) {
             throw ZbarError::exitStatus($this->processAll->getExitCode());
         }
 
-        $parts = explode(":", $this->processAll->getOutput());
+        $parts = explode(':', $this->processAll->getOutput());
 
-        if (count($parts) !== 2 || empty($parts[0]) || empty($parts[1]) || !is_string($parts[0]) || !is_string($parts[0])) {
+        if (count($parts) !== 2 || empty($parts[0]) || empty($parts[1]) || ! is_string($parts[0]) || ! is_string($parts[0])) {
             throw ZbarError::exitStatus(5);
         }
 
