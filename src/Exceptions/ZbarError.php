@@ -32,6 +32,9 @@ class ZbarError extends Exception
             case 4:
                 $message = 'No barcode was detected in one or more of the images. No other errors occurred.';
                 break;
+            case 5:
+                $message = 'Unable to detect bar code type.';
+                break;
             default:
                 $message = 'Unknown error';
                 break;
