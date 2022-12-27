@@ -17,7 +17,7 @@ class Zbar
     /**
      * @var Process
      */
-    protected $processType;
+    protected $processAll;
 
     /**
      * Supported file formats.
@@ -53,7 +53,7 @@ class Zbar
         }
 
         $this->process = new Process(['zbarimg', '-q', '--raw', $image]);
-        $this->processType = new Process(['zbarimg', '-q', $image]);
+        $this->processAll = new Process(['zbarimg', '-q', $image]);
     }
 
     /**
@@ -79,22 +79,39 @@ class Zbar
      *
      * @return string
      *
-     * @throws ZBarError
+     * @throws ZbarError
      */
     public function type()
     {
-        $this->processType->run();
+        return $this->decode()->type();
+    }
 
-        if (!$this->processType->isSuccessful()) {
-            throw ZbarError::exitStatus($this->processType->getExitCode());
+    /**
+     * Find both the bar code and type of bar code then returns an object.
+     *
+     * @return BarCode
+     *
+     * @throws ZbarError
+     */
+    public function decode()
+    {
+        $this->processAll->run();
+
+        if (!$this->processAll->isSuccessful()) {
+            throw ZbarError::exitStatus($this->processAll->getExitCode());
         }
 
-        $parts = explode(":", $this->processType->getOutput());
+        $parts = explode(":", $this->processAll->getOutput());
 
-        if (count($parts) !== 2 || empty($parts[0]) || !is_string($parts[0])) {
+        if (count($parts) !== 2 || empty($parts[0]) || empty($parts[1]) || !is_string($parts[0]) || !is_string($parts[0])) {
             throw ZbarError::exitStatus(5);
         }
 
-        return $parts[0];
+        // Deleteting non alphanumerical characters, like
+        // return lines.
+        $code = preg_replace('/[^a-z0-9]/i', '', $parts[1]);
+        $type = $parts[0];
+
+        return new BarCode($code, $type);
     }
 }

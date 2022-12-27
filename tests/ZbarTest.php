@@ -111,4 +111,24 @@ class ZbarTest extends TestCase
 
         $this->assertSame('CODE-128', $type);
     }
+
+    /** @test */
+    public function it_can_get_bar_code_and_type_of_code128_bar_code()
+    {
+        $zbar = new ZBar($this->code128);
+        $barCode = $zbar->decode();
+
+        $this->assertSame('1234567890', $barCode->code());
+        $this->assertSame('CODE-128', $barCode->type());
+    }
+
+    /** @test */
+    public function it_can_get_bar_code_and_type_of_ean13_bar_code()
+    {
+        $zbar = new ZBar($this->ean13);
+        $barCode = $zbar->decode();
+
+        $this->assertSame('1234567890128', $barCode->code());
+        $this->assertSame('EAN-13', $barCode->type());
+    }
 }
