@@ -131,4 +131,14 @@ class ZbarTest extends TestCase
         $this->assertSame('1234567890128', $barCode->code());
         $this->assertSame('EAN-13', $barCode->type());
     }
+
+    /** @test */
+    public function it_can_get_bar_code_and_type_of_qrcode()
+    {
+        $zbar = new ZBar($this->qrcode);
+        $barCode = $zbar->decode();
+
+        $this->assertSame('tarfin', $barCode->code());
+        $this->assertSame('QR-Code', $barCode->type());
+    }
 }
