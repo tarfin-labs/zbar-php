@@ -107,7 +107,6 @@ class Zbar
      * Return symbol object.
      *
      * @param $output
-     *
      * @return object
      */
     private function parse($output)
