@@ -29,6 +29,16 @@ class ZbarTest extends TestCase
      */
     protected $emptyImage;
 
+    /**
+     * @var string
+     */
+    protected $ean13;
+
+    /**
+     * @var string
+     */
+    protected $code128;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -37,6 +47,8 @@ class ZbarTest extends TestCase
         $this->barcode = __DIR__.'/files/barcode.gif';
         $this->invalidFile = __DIR__.'/files/qrcode.txt';
         $this->emptyImage = __DIR__.'/files/empty.png';
+        $this->ean13 = __DIR__.'/files/ean-13.jpg';
+        $this->code128 = __DIR__.'/files/code-128.png';
     }
 
     /** @test */
@@ -80,5 +92,53 @@ class ZbarTest extends TestCase
         $code = $zbar->scan();
 
         $this->assertSame('tarfin-1234', $code);
+    }
+
+    /** @test */
+    public function it_can_get_ean13_bar_code_type()
+    {
+        $zbar = new Zbar($this->ean13);
+        $type = $zbar->type();
+
+        $this->assertSame('EAN-13', $type);
+    }
+
+    /** @test */
+    public function it_can_get_code128_bar_code_type()
+    {
+        $zbar = new ZBar($this->code128);
+        $type = $zbar->type();
+
+        $this->assertSame('CODE-128', $type);
+    }
+
+    /** @test */
+    public function it_can_get_bar_code_and_type_of_code128_bar_code()
+    {
+        $zbar = new ZBar($this->code128);
+        $barCode = $zbar->decode();
+
+        $this->assertSame('1234567890', $barCode->code());
+        $this->assertSame('CODE-128', $barCode->type());
+    }
+
+    /** @test */
+    public function it_can_get_bar_code_and_type_of_ean13_bar_code()
+    {
+        $zbar = new ZBar($this->ean13);
+        $barCode = $zbar->decode();
+
+        $this->assertSame('1234567890128', $barCode->code());
+        $this->assertSame('EAN-13', $barCode->type());
+    }
+
+    /** @test */
+    public function it_can_get_bar_code_and_type_of_qrcode()
+    {
+        $zbar = new ZBar($this->qrcode);
+        $barCode = $zbar->decode();
+
+        $this->assertSame('tarfin', $barCode->code());
+        $this->assertSame('QR-Code', $barCode->type());
     }
 }

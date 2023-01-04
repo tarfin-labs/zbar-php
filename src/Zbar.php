@@ -15,6 +15,11 @@ class Zbar
     protected $process;
 
     /**
+     * @var Process
+     */
+    protected $processAll;
+
+    /**
      * Supported file formats.
      *
      * @var array
@@ -48,6 +53,7 @@ class Zbar
         }
 
         $this->process = new Process(['zbarimg', '-q', '--raw', $image]);
+        $this->processAll = new Process(['zbarimg', '-q', $image]);
     }
 
     /**
@@ -66,5 +72,46 @@ class Zbar
         }
 
         return trim($this->process->getOutput());
+    }
+
+    /**
+     * Get the bar code type after scanning it.
+     *
+     * @return string
+     *
+     * @throws ZbarError
+     */
+    public function type()
+    {
+        return $this->decode()->type();
+    }
+
+    /**
+     * Find both the bar code and type of bar code then returns an object.
+     *
+     * @return BarCode
+     *
+     * @throws ZbarError
+     */
+    public function decode()
+    {
+        $this->processAll->run();
+
+        if (! $this->processAll->isSuccessful()) {
+            throw ZbarError::exitStatus($this->processAll->getExitCode());
+        }
+
+        $parts = explode(':', $this->processAll->getOutput());
+
+        if (count($parts) !== 2 || empty($parts[0]) || empty($parts[1]) || ! is_string($parts[0]) || ! is_string($parts[0])) {
+            throw ZbarError::exitStatus(5);
+        }
+
+        // Deleteting non alphanumerical characters, like
+        // return lines.
+        $code = preg_replace('/[^a-z0-9]/i', '', $parts[1]);
+        $type = $parts[0];
+
+        return new BarCode($code, $type);
     }
 }

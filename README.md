@@ -31,6 +31,25 @@ $code = $zbar->scan();
 
 Supported file formats: `pdf`, `jpeg`, `jpg`, `svg` and `gif`.
 
+Here is how to get only the type of bar code.
+
+```php
+$zbar = new \TarfinLabs\ZbarPhp\Zbar($imagePath);
+$type = $zbar->type();
+
+echo $type; // "EAN-13"
+```
+
+And this is how you get both.
+
+```php
+$zbar = new \TarfinLabs\ZbarPhp\Zbar($imagePath);
+$barCode = $zbar->decode();
+
+echo $barCode->code(); // "1234567890128"
+echo $barCode->type(); // "EAN-13"
+```
+
 ### Testing
 
 ``` bash
