@@ -10,9 +10,9 @@ use TarfinLabs\ZbarPhp\Exceptions\ZbarError;
 class Zbar
 {
     /**
-     * @var Process
+     * @var object
      */
-    protected $process;
+    protected $output;
 
     /**
      * Supported file formats.
@@ -34,6 +34,7 @@ class Zbar
      *
      * @throws InvalidFormat
      * @throws UnableToOpen
+     * @throws \TarfinLabs\ZbarPhp\Exceptions\ZbarError
      */
     public function __construct($image)
     {
@@ -48,12 +49,13 @@ class Zbar
         }
 
         $this->process = new Process(['zbarimg', '-q', '--xml', $image]);
+        $this->runProcess();
     }
 
     /**
-     * Run process and return parsed output.
+     * Run process and assign object data to output.
      *
-     * @return mixed
+     * @return void
      *
      * @throws \TarfinLabs\ZbarPhp\Exceptions\ZbarError
      */
@@ -65,29 +67,23 @@ class Zbar
             throw ZbarError::exitStatus($this->process->getExitCode());
         }
 
-        return $this->parse($this->process->getOutput());
+        $this->output = $this->parse($this->process->getOutput());
     }
 
     /**
      * Scan bar-code and return value.
      *
      * @return string
-     *
-     * @throws ZbarError
      */
     public function scan()
     {
-        $output = $this->runProcess();
-
-        return $output->data;
+        return $this->output->data;
     }
 
     /**
      * Get the bar-code type after scanning it.
      *
      * @return string
-     *
-     * @throws ZbarError
      */
     public function type()
     {
@@ -98,24 +94,21 @@ class Zbar
      * Find both the bar-code and type of the bar-code then returns an object.
      *
      * @return BarCode
-     *
-     * @throws ZbarError
      */
     public function decode()
     {
-        $output = $this->runProcess();
-
-        $code = $output->data;
-        $type = $output->{'@attributes'}->type;
+        $code = $this->output->data;
+        $type = $this->output->{'@attributes'}->type;
 
         return new BarCode($code, $type);
     }
 
     /**
-     * Return symbol data object.
+     * Return symbol object.
      *
      * @param $output
-     * @return mixed
+     *
+     * @return object
      */
     private function parse($output)
     {
