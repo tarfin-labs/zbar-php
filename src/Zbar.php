@@ -52,8 +52,7 @@ class Zbar
             throw InvalidFormat::invalidMimeType($mimeType);
         }
 
-        $this->process = new Process(['zbarimg', '-q', '--raw', $image]);
-        $this->processAll = new Process(['zbarimg', '-q', $image]);
+        $this->process = new Process(['zbarimg', '-q', '--xml', $image]);
     }
 
     /**
@@ -71,7 +70,9 @@ class Zbar
             throw ZbarError::exitStatus($this->process->getExitCode());
         }
 
-        return trim($this->process->getOutput());
+        $output = $this->parse($this->process->getOutput());
+
+        return $output->source->index->symbol->data;
     }
 
     /**
@@ -113,5 +114,13 @@ class Zbar
         $type = $parts[0];
 
         return new BarCode($code, $type);
+    }
+
+    private function parse($output)
+    {
+        $xml = simplexml_load_string($output, 'SimpleXMLElement', LIBXML_NOCDATA);
+        $jsonOutput = json_encode($xml);
+
+        return json_decode($jsonOutput);
     }
 }
