@@ -54,6 +54,7 @@ class Zbar
      * Run process and return parsed output.
      *
      * @return mixed
+     *
      * @throws \TarfinLabs\ZbarPhp\Exceptions\ZbarError
      */
     private function runProcess()
@@ -114,7 +115,6 @@ class Zbar
      * Return symbol data object.
      *
      * @param $output
-     *
      * @return mixed
      */
     private function parse($output)
