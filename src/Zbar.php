@@ -50,6 +50,12 @@ class Zbar
         $this->process = new Process(['zbarimg', '-q', '--xml', $image]);
     }
 
+    /**
+     * Run process and return parsed output.
+     *
+     * @return mixed
+     * @throws \TarfinLabs\ZbarPhp\Exceptions\ZbarError
+     */
     private function runProcess()
     {
         $this->process->run();
@@ -76,7 +82,7 @@ class Zbar
     }
 
     /**
-     * Get the bar code type after scanning it.
+     * Get the bar-code type after scanning it.
      *
      * @return string
      *
@@ -88,7 +94,7 @@ class Zbar
     }
 
     /**
-     * Find both the bar code and type of bar code then returns an object.
+     * Find both the bar-code and type of the bar-code then returns an object.
      *
      * @return BarCode
      *
@@ -105,7 +111,7 @@ class Zbar
     }
 
     /**
-     * Return output as an array.
+     * Return symbol data object.
      *
      * @param $output
      *
