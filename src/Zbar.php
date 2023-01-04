@@ -15,11 +15,6 @@ class Zbar
     protected $process;
 
     /**
-     * @var Process
-     */
-    protected $processAll;
-
-    /**
      * Supported file formats.
      *
      * @var array
@@ -55,6 +50,17 @@ class Zbar
         $this->process = new Process(['zbarimg', '-q', '--xml', $image]);
     }
 
+    private function runProcess()
+    {
+        $this->process->run();
+
+        if (! $this->process->isSuccessful()) {
+            throw ZbarError::exitStatus($this->process->getExitCode());
+        }
+
+        return $this->parse($this->process->getOutput());
+    }
+
     /**
      * Scan bar-code and return value.
      *
@@ -64,15 +70,9 @@ class Zbar
      */
     public function scan()
     {
-        $this->process->run();
+        $output = $this->runProcess();
 
-        if (! $this->process->isSuccessful()) {
-            throw ZbarError::exitStatus($this->process->getExitCode());
-        }
-
-        $output = $this->parse($this->process->getOutput());
-
-        return $output->source->index->symbol->data;
+        return $output->data;
     }
 
     /**
@@ -96,31 +96,27 @@ class Zbar
      */
     public function decode()
     {
-        $this->processAll->run();
+        $output = $this->runProcess();
 
-        if (! $this->processAll->isSuccessful()) {
-            throw ZbarError::exitStatus($this->processAll->getExitCode());
-        }
-
-        $parts = explode(':', $this->processAll->getOutput());
-
-        if (count($parts) !== 2 || empty($parts[0]) || empty($parts[1]) || ! is_string($parts[0]) || ! is_string($parts[0])) {
-            throw ZbarError::exitStatus(5);
-        }
-
-        // Deleteting non alphanumerical characters, like
-        // return lines.
-        $code = preg_replace('/[^a-z0-9]/i', '', $parts[1]);
-        $type = $parts[0];
+        $code = $output->data;
+        $type = $output->{'@attributes'}->type;
 
         return new BarCode($code, $type);
     }
 
+    /**
+     * Return output as an array.
+     *
+     * @param $output
+     *
+     * @return mixed
+     */
     private function parse($output)
     {
         $xml = simplexml_load_string($output, 'SimpleXMLElement', LIBXML_NOCDATA);
-        $jsonOutput = json_encode($xml);
+        $encodedOutput = json_encode($xml);
+        $decodedOutput = json_decode($encodedOutput);
 
-        return json_decode($jsonOutput);
+        return $decodedOutput->source->index->symbol;
     }
 }
