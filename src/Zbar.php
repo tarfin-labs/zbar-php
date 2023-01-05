@@ -15,9 +15,9 @@ class Zbar
     protected $process;
 
     /**
-     * @var Process
+     * @var object
      */
-    protected $processAll;
+    protected $output;
 
     /**
      * Supported file formats.
@@ -52,8 +52,29 @@ class Zbar
             throw InvalidFormat::invalidMimeType($mimeType);
         }
 
-        $this->process = new Process(['zbarimg', '-q', '--raw', $image]);
-        $this->processAll = new Process(['zbarimg', '-q', $image]);
+        $this->process = new Process(['zbarimg', '-q', '--xml', $image]);
+    }
+
+    /**
+     * Run process and assign object data to output.
+     *
+     * @return object
+     *
+     * @throws \TarfinLabs\ZbarPhp\Exceptions\ZbarError
+     */
+    private function runProcess()
+    {
+        if (! empty($this->output)) {
+            return $this->output;
+        }
+
+        $this->process->run();
+
+        if (! $this->process->isSuccessful()) {
+            throw ZbarError::exitStatus($this->process->getExitCode());
+        }
+
+        return $this->output = $this->parse($this->process->getOutput());
     }
 
     /**
@@ -61,25 +82,21 @@ class Zbar
      *
      * @return string
      *
-     * @throws ZbarError
+     * @throws \TarfinLabs\ZbarPhp\Exceptions\ZbarError
      */
     public function scan()
     {
-        $this->process->run();
+        $output = $this->runProcess();
 
-        if (! $this->process->isSuccessful()) {
-            throw ZbarError::exitStatus($this->process->getExitCode());
-        }
-
-        return trim($this->process->getOutput());
+        return $output->data;
     }
 
     /**
-     * Get the bar code type after scanning it.
+     * Get the bar-code type after scanning it.
      *
      * @return string
      *
-     * @throws ZbarError
+     * @throws \TarfinLabs\ZbarPhp\Exceptions\ZbarError
      */
     public function type()
     {
@@ -87,31 +104,33 @@ class Zbar
     }
 
     /**
-     * Find both the bar code and type of bar code then returns an object.
+     * Find both the bar-code and type of the bar-code then returns an object.
      *
      * @return BarCode
      *
-     * @throws ZbarError
+     * @throws \TarfinLabs\ZbarPhp\Exceptions\ZbarError
      */
     public function decode()
     {
-        $this->processAll->run();
-
-        if (! $this->processAll->isSuccessful()) {
-            throw ZbarError::exitStatus($this->processAll->getExitCode());
-        }
-
-        $parts = explode(':', $this->processAll->getOutput());
-
-        if (count($parts) !== 2 || empty($parts[0]) || empty($parts[1]) || ! is_string($parts[0]) || ! is_string($parts[0])) {
-            throw ZbarError::exitStatus(5);
-        }
-
-        // Deleteting non alphanumerical characters, like
-        // return lines.
-        $code = preg_replace('/[^a-z0-9]/i', '', $parts[1]);
-        $type = $parts[0];
+        $output = $this->runProcess();
+        $code = $output->data;
+        $type = $output->{'@attributes'}->type;
 
         return new BarCode($code, $type);
+    }
+
+    /**
+     * Return symbol object.
+     *
+     * @param $output
+     * @return object
+     */
+    private function parse($output)
+    {
+        $xml = simplexml_load_string($output, 'SimpleXMLElement', LIBXML_NOCDATA);
+        $encodedOutput = json_encode($xml);
+        $decodedOutput = json_decode($encodedOutput);
+
+        return $decodedOutput->source->index->symbol;
     }
 }
