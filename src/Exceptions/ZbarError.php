@@ -35,6 +35,9 @@ class ZbarError extends Exception
             case 5:
                 $message = 'Unable to detect bar code type.';
                 break;
+            case 127:
+                $message = 'Zbar command not found';
+                break;
             default:
                 $message = 'Unknown error';
                 break;
