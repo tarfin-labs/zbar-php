@@ -70,11 +70,15 @@ class Zbar
 
         $this->process->run();
 
+		$output = $this->process->getOutput();
+		
         if (! $this->process->isSuccessful()) {
-            throw ZbarError::exitStatus($this->process->getExitCode());
+			
+			if ($this->process->getExitCode() !== -1 || strpos($output, '<barcodes') !== 0)
+                throw ZbarError::exitStatus($this->process->getExitCode());
         }
 
-        return $this->output = $this->parse($this->process->getOutput());
+        return $this->output = $this->parse($output);
     }
 
     /**
