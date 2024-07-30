@@ -9,7 +9,7 @@ class UnableToOpen extends Exception
     /**
      * No such file exception.
      *
-     * @param $file
+     * @param  $file
      * @return static
      */
     public static function noSuchFile($file)

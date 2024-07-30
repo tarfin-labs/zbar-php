@@ -35,7 +35,7 @@ class Zbar
     /**
      * Zbar constructor.
      *
-     * @param $image
+     * @param  $image
      *
      * @throws InvalidFormat
      * @throws UnableToOpen
@@ -122,7 +122,7 @@ class Zbar
     /**
      * Return symbol object.
      *
-     * @param $output
+     * @param  $output
      * @return object
      */
     private function parse($output)
