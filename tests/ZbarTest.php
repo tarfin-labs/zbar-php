@@ -34,6 +34,11 @@ class ZbarTest extends TestCase
      */
     protected $ean13;
 
+	/**
+	 * @var string
+	 */
+	protected $code128andEan13;
+
     /**
      * @var string
      */
@@ -49,6 +54,7 @@ class ZbarTest extends TestCase
         $this->emptyImage = __DIR__.'/files/empty.png';
         $this->ean13 = __DIR__.'/files/ean-13.jpg';
         $this->code128 = __DIR__.'/files/code-128.png';
+        $this->code128andEan13 = __DIR__.'/files/code-128-and-ean13.png';
     }
 
     /** @test */
@@ -141,4 +147,69 @@ class ZbarTest extends TestCase
         $this->assertSame('tarfin', $barCode->code());
         $this->assertSame('QR-Code', $barCode->type());
     }
+
+	/** @test */
+	public function it_can_scan_barcode_from_file_with_multiple_barcodes() {
+		$zbar = new Zbar($this->code128andEan13);
+		$code = $zbar->scan();
+
+		$this->assertSame(true, in_array($code, ['1234567890', '1234567890128']));
+	}
+
+	/** @test */
+	public function it_can_scan_all_barcodes_from_file_with_multiple_barcodes() {
+		$zbar = new Zbar($this->code128andEan13);
+		$codes = $zbar->scanAll();
+
+		$this->assertSame(true, in_array('1234567890', $codes));
+		$this->assertSame(true, in_array('1234567890128', $codes));
+		$this->assertCount(2, $codes);
+	}
+
+	/** @test */
+	public function it_can_get_barcode_and_type_from_file_with_multiple_barcodes() {
+		$zbar = new Zbar($this->code128andEan13);
+		$barcode = $zbar->decode();
+		
+		switch ($barcode->code()) {
+			case '1234567890128':
+				$this->assertSame('EAN-13', $barcode->type());
+				break;
+			case '1234567890':
+				$this->assertSame('CODE-128', $barcode->type());
+				break;
+			default:
+				$this->fail("Unexpected barcode value \"{$barcode->code()}\".");
+		}
+	}
+	
+	/** @test */
+	public function it_can_get_all_barcodes_and_types_from_file_with_multiple_barcodes() {
+		$zbar = new Zbar($this->code128andEan13);
+		$barcodes = $zbar->decodeAll();
+		
+		$seen = [
+			'1234567890128' => false,
+			'1234567890' => false,
+		];
+		
+		foreach($barcodes as $barcode) {
+
+
+			switch ($barcode->code()) {
+				case '1234567890128':
+					$this->assertSame('EAN-13', $barcode->type());
+					break;
+				case '1234567890':
+					$this->assertSame('CODE-128', $barcode->type());
+					break;
+				default:
+					$this->fail("Unexpected barcode value \"{$barcode->code()}\".");
+			}
+			$seen[$barcode->code()] = true;
+		}
+		
+		$this->assertSame(true, $seen['1234567890128']);
+		$this->assertSame(true, $seen['1234567890']);
+	}
 }

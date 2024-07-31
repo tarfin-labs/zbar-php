@@ -70,11 +70,15 @@ class Zbar
 
         $this->process->run();
 
+		$output = $this->process->getOutput();
+		
         if (! $this->process->isSuccessful()) {
-            throw ZbarError::exitStatus($this->process->getExitCode());
+			
+			if ($this->process->getExitCode() !== -1 || strpos($output, '<barcodes') !== 0)
+                throw ZbarError::exitStatus($this->process->getExitCode());
         }
 
-        return $this->output = $this->parse($this->process->getOutput());
+        return $this->output = $this->parse($output);
     }
 
     /**
@@ -87,9 +91,30 @@ class Zbar
     public function scan()
     {
         $output = $this->runProcess();
+		
+		if (is_array($output))
+			$output = $output[0];
 
         return $output->data;
     }
+
+	/**
+	 * Scan bar-codes and return all values.
+	 *
+	 * @return string[]
+	 *
+	 * @throws \TarfinLabs\ZbarPhp\Exceptions\ZbarError
+	 */
+	public function scanAll() {
+		$output = $this->runProcess();
+
+		if (!is_array($output))
+			$output = [$output];
+
+		return array_map(function ($item) {
+			return $item->data;
+		}, $output);
+	}
 
     /**
      * Get the bar-code type after scanning it.
@@ -113,10 +138,33 @@ class Zbar
     public function decode()
     {
         $output = $this->runProcess();
+
+	    if (is_array($output))
+		    $output = $output[0];
+		
         $code = $output->data;
         $type = $output->{'@attributes'}->type;
 
         return new BarCode($code, $type);
+    }
+	
+	/**
+     * Find both the bar-code and type of the bar-codes then returns objects for all barcodes.
+     *
+     * @return BarCode[]
+     *
+     * @throws \TarfinLabs\ZbarPhp\Exceptions\ZbarError
+     */
+    public function decodeAll()
+    {
+        $output = $this->runProcess();
+
+	    if (!is_array($output))
+		    $output = [$output];
+		
+        return array_map(function ($item) {
+	        return new BarCode($item->data, $item->{'@attributes'}->type);
+        }, $output);
     }
 
     /**
