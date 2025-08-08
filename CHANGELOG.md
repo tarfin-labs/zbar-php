@@ -4,6 +4,10 @@ All notable changes to `zbar-php` will be documented in this file
 
 ## Unreleased
 
+## 2.0.0 - 2025-08-08
+- Dropped support for PHP versions under 8.2
+- Added PHP 8.4 support
+
 ## 1.6.0 - 2023-05-11
 - PHP 8.2 support added.
 
