@@ -4,7 +4,9 @@ namespace TarfinLabs\ZbarPhp;
 
 class BarCode
 {
-    public function __construct(protected string $code, protected string $type) {}
+    public function __construct(protected string $code, protected string $type)
+    {
+    }
 
     /**
      * Returns the bar code.
