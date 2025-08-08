@@ -2,13 +2,12 @@
 
 namespace TarfinLabs\ZbarPhp\Tests;
 
-use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\TestCase;
 use TarfinLabs\ZbarPhp\Exceptions\InvalidFormat;
 use TarfinLabs\ZbarPhp\Exceptions\UnableToOpen;
 use TarfinLabs\ZbarPhp\Exceptions\ZbarError;
 use TarfinLabs\ZbarPhp\Zbar;
-
 
 class ZbarTest extends TestCase
 {
@@ -28,12 +27,12 @@ class ZbarTest extends TestCase
     {
         parent::setUp();
 
-        $this->qrcode = __DIR__ . '/files/qrcode.png';
-        $this->barcode = __DIR__ . '/files/barcode.gif';
-        $this->invalidFile = __DIR__ . '/files/qrcode.txt';
-        $this->emptyImage = __DIR__ . '/files/empty.png';
-        $this->ean13 = __DIR__ . '/files/ean-13.jpg';
-        $this->code128 = __DIR__ . '/files/code-128.png';
+        $this->qrcode = __DIR__.'/files/qrcode.png';
+        $this->barcode = __DIR__.'/files/barcode.gif';
+        $this->invalidFile = __DIR__.'/files/qrcode.txt';
+        $this->emptyImage = __DIR__.'/files/empty.png';
+        $this->ean13 = __DIR__.'/files/ean-13.jpg';
+        $this->code128 = __DIR__.'/files/code-128.png';
     }
 
     #[Test]
