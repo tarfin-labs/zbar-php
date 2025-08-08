@@ -8,11 +8,8 @@ class InvalidFormat extends Exception
 {
     /**
      * Invalid mime type exception.
-     *
-     * @param  $mimeType
-     * @return static
      */
-    public static function invalidMimeType($mimeType)
+    public static function invalidMimeType(string $mimeType): static
     {
         return new static("The file type `{$mimeType}` does not valid.");
     }

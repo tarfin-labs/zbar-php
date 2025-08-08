@@ -9,22 +9,14 @@ use TarfinLabs\ZbarPhp\Exceptions\ZbarError;
 
 class Zbar
 {
-    /**
-     * @var Process
-     */
-    protected $process;
+    protected Process $process;
 
-    /**
-     * @var object
-     */
-    protected $output;
+    protected object $output;
 
     /**
      * Supported file formats.
-     *
-     * @var array
      */
-    protected $validFormats = [
+    protected array $validFormats = [
         'application/pdf',
         'image/png',
         'image/jpeg',
@@ -35,12 +27,10 @@ class Zbar
     /**
      * Zbar constructor.
      *
-     * @param  $image
-     *
      * @throws InvalidFormat
      * @throws UnableToOpen
      */
-    public function __construct($image)
+    public function __construct(string $image)
     {
         if (! file_exists($image)) {
             throw UnableToOpen::noSuchFile($image);
@@ -58,11 +48,9 @@ class Zbar
     /**
      * Run process and assign object data to output.
      *
-     * @return object
-     *
      * @throws \TarfinLabs\ZbarPhp\Exceptions\ZbarError
      */
-    private function runProcess()
+    private function runProcess(): object
     {
         if (! empty($this->output)) {
             return $this->output;
@@ -80,11 +68,9 @@ class Zbar
     /**
      * Scan bar-code and return value.
      *
-     * @return string
-     *
      * @throws \TarfinLabs\ZbarPhp\Exceptions\ZbarError
      */
-    public function scan()
+    public function scan(): string
     {
         $output = $this->runProcess();
 
@@ -94,11 +80,9 @@ class Zbar
     /**
      * Get the bar-code type after scanning it.
      *
-     * @return string
-     *
      * @throws \TarfinLabs\ZbarPhp\Exceptions\ZbarError
      */
-    public function type()
+    public function type(): string
     {
         return $this->decode()->type();
     }
@@ -106,11 +90,9 @@ class Zbar
     /**
      * Find both the bar-code and type of the bar-code then returns an object.
      *
-     * @return BarCode
-     *
      * @throws \TarfinLabs\ZbarPhp\Exceptions\ZbarError
      */
-    public function decode()
+    public function decode(): BarCode
     {
         $output = $this->runProcess();
         $code = $output->data;
@@ -121,11 +103,8 @@ class Zbar
 
     /**
      * Return symbol object.
-     *
-     * @param  $output
-     * @return object
      */
-    private function parse($output)
+    private function parse(string $output): object
     {
         $xml = simplexml_load_string($output, 'SimpleXMLElement', LIBXML_NOCDATA);
         $encodedOutput = json_encode($xml);
