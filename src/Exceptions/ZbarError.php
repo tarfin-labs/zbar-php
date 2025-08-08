@@ -8,11 +8,8 @@ class ZbarError extends Exception
 {
     /**
      * Zbar exit status code messages.
-     *
-     * @param  $code
-     * @return static
      */
-    public static function exitStatus($code)
+    public static function exitStatus(int $code): static
     {
         $message = '';
 

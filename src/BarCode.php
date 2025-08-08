@@ -4,38 +4,20 @@ namespace TarfinLabs\ZbarPhp;
 
 class BarCode
 {
-    /**
-     * @var string
-     */
-    protected $code;
-
-    /**
-     * @var string
-     */
-    protected $type;
-
-    public function __construct($code, $type)
-    {
-        $this->code = $code;
-        $this->type = $type;
-    }
+    public function __construct(protected string $code, protected string $type) {}
 
     /**
      * Returns the bar code.
-     *
-     * @return string
      */
-    public function code()
+    public function code(): string
     {
         return $this->code;
     }
 
     /**
      * Returns the type of bar code.
-     *
-     * @return string
      */
-    public function type()
+    public function type(): string
     {
         return $this->type;
     }

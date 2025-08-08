@@ -3,72 +3,57 @@
 namespace TarfinLabs\ZbarPhp\Tests;
 
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 use TarfinLabs\ZbarPhp\Exceptions\InvalidFormat;
 use TarfinLabs\ZbarPhp\Exceptions\UnableToOpen;
 use TarfinLabs\ZbarPhp\Exceptions\ZbarError;
 use TarfinLabs\ZbarPhp\Zbar;
 
+
 class ZbarTest extends TestCase
 {
-    /**
-     * @var string
-     */
-    protected $qrcode;
+    protected string $qrcode;
 
-    /**
-     * @var string
-     */
-    protected $barcode;
+    protected string $barcode;
 
-    /**
-     * @var string
-     */
-    protected $invalidFile;
-    /**
-     * @var string
-     */
-    protected $emptyImage;
+    protected string $invalidFile;
 
-    /**
-     * @var string
-     */
-    protected $ean13;
+    protected string $emptyImage;
 
-    /**
-     * @var string
-     */
-    protected $code128;
+    protected string $ean13;
+
+    protected string $code128;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->qrcode = __DIR__.'/files/qrcode.png';
-        $this->barcode = __DIR__.'/files/barcode.gif';
-        $this->invalidFile = __DIR__.'/files/qrcode.txt';
-        $this->emptyImage = __DIR__.'/files/empty.png';
-        $this->ean13 = __DIR__.'/files/ean-13.jpg';
-        $this->code128 = __DIR__.'/files/code-128.png';
+        $this->qrcode = __DIR__ . '/files/qrcode.png';
+        $this->barcode = __DIR__ . '/files/barcode.gif';
+        $this->invalidFile = __DIR__ . '/files/qrcode.txt';
+        $this->emptyImage = __DIR__ . '/files/empty.png';
+        $this->ean13 = __DIR__ . '/files/ean-13.jpg';
+        $this->code128 = __DIR__ . '/files/code-128.png';
     }
 
-    /** @test */
-    public function it_will_throw_unable_to_open_exception_when_try_to_scan_non_existing_file()
+    #[Test]
+    public function it_will_throw_unable_to_open_exception_when_try_to_scan_non_existing_file(): void
     {
         $this->expectException(UnableToOpen::class);
 
         new Zbar('nonexisting.png');
     }
 
-    /** @test */
-    public function it_will_throw_invalid_format_exception_when_try_to_scan_invalid_file_type()
+    #[Test]
+    public function it_will_throw_invalid_format_exception_when_try_to_scan_invalid_file_type(): void
     {
         $this->expectException(InvalidFormat::class);
 
         new Zbar($this->invalidFile);
     }
 
-    /** @test */
-    public function it_can_scan_qrcode()
+    #[Test]
+    public function it_can_scan_qrcode(): void
     {
         $zbar = new Zbar($this->qrcode);
         $code = $zbar->scan();
@@ -76,8 +61,8 @@ class ZbarTest extends TestCase
         $this->assertSame('tarfin', $code);
     }
 
-    /** @test */
-    public function it_will_throw_error_when_try_to_scan_empty_image()
+    #[Test]
+    public function it_will_throw_error_when_try_to_scan_empty_image(): void
     {
         $this->expectException(ZbarError::class);
 
@@ -85,8 +70,8 @@ class ZbarTest extends TestCase
         $code = $zbar->scan();
     }
 
-    /** @test */
-    public function it_can_scan_barcode()
+    #[Test]
+    public function it_can_scan_barcode(): void
     {
         $zbar = new Zbar($this->barcode);
         $code = $zbar->scan();
@@ -94,8 +79,8 @@ class ZbarTest extends TestCase
         $this->assertSame('tarfin-1234', $code);
     }
 
-    /** @test */
-    public function it_can_get_ean13_bar_code_type()
+    #[Test]
+    public function it_can_get_ean13_bar_code_type(): void
     {
         $zbar = new Zbar($this->ean13);
         $type = $zbar->type();
@@ -103,8 +88,8 @@ class ZbarTest extends TestCase
         $this->assertSame('EAN-13', $type);
     }
 
-    /** @test */
-    public function it_can_get_code128_bar_code_type()
+    #[Test]
+    public function it_can_get_code128_bar_code_type(): void
     {
         $zbar = new ZBar($this->code128);
         $type = $zbar->type();
@@ -112,8 +97,8 @@ class ZbarTest extends TestCase
         $this->assertSame('CODE-128', $type);
     }
 
-    /** @test */
-    public function it_can_get_bar_code_and_type_of_code128_bar_code()
+    #[Test]
+    public function it_can_get_bar_code_and_type_of_code128_bar_code(): void
     {
         $zbar = new ZBar($this->code128);
         $barCode = $zbar->decode();
@@ -122,8 +107,8 @@ class ZbarTest extends TestCase
         $this->assertSame('CODE-128', $barCode->type());
     }
 
-    /** @test */
-    public function it_can_get_bar_code_and_type_of_ean13_bar_code()
+    #[Test]
+    public function it_can_get_bar_code_and_type_of_ean13_bar_code(): void
     {
         $zbar = new ZBar($this->ean13);
         $barCode = $zbar->decode();
@@ -132,8 +117,8 @@ class ZbarTest extends TestCase
         $this->assertSame('EAN-13', $barCode->type());
     }
 
-    /** @test */
-    public function it_can_get_bar_code_and_type_of_qrcode()
+    #[Test]
+    public function it_can_get_bar_code_and_type_of_qrcode(): void
     {
         $zbar = new ZBar($this->qrcode);
         $barCode = $zbar->decode();
