@@ -11,7 +11,7 @@ class Zbar
 {
     protected Process $process;
 
-    protected object $output;
+    protected ?object $output = null;
 
     /**
      * Supported file formats.
@@ -52,7 +52,7 @@ class Zbar
      */
     private function runProcess(): object
     {
-        if (! empty($this->output)) {
+        if ($this->output !== null) {
             return $this->output;
         }
 
